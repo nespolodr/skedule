@@ -1,0 +1,106 @@
+<ui:composition template="/templates/layout.xhtml" lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+	<ui:define name="centerContent">
+
+		<c:if test="#{pacienteController.medico != null}">
+			<h:form id="formPrincipal">
+				<p:dataTable var="lista" value="#{pacienteController.medico.pacientes}" id="tabelaPacientes">
+					<!-- 				 selectionMode="single"	selection="#{pacienteController.paciente}" rowKey="#{lista.id}"> -->
+					<f:facet name="header">#{pacienteController.medico.nome} - Lista de Pacientes</f:facet>
+
+					<p:column headerText="Nome">
+						<h:outputText value="#{lista.nome}" />
+					</p:column>
+
+					<p:column headerText="rg">
+						<h:outputText value="#{lista.rg}" />
+					</p:column>
+
+					<p:column headerText="cpf">
+						<h:outputText value="#{lista.cpf}" />
+					</p:column>
+
+					<p:column headerText="Acoes">
+						<p:commandButton id="editarButton" value="Editar" icon="ui-icon-search" update=":formPrincipal:panelAlterar" oncomplete="dialogAlterar.show()">
+							<f:setPropertyActionListener target="#{pacienteController.paciente}" value="#{lista}" />
+						</p:commandButton>
+
+						<p:commandButton id="excluirButton" value="Excluir" icon="ui-icon-search" update=":formPrincipal:tabelaPacientes"
+							oncomplete="dialogExcluir.show()">
+							<f:setPropertyActionListener target="#{pacienteController.paciente}" value="#{lista}" />
+						</p:commandButton>
+					</p:column>
+
+					<f:facet name="footer">
+						<p:commandButton id="cadastrar" value="Cadastrar" oncomplete="dialogCadastrar.show()" />
+					</f:facet>
+
+				</p:dataTable>
+
+				<p:dialog id="Alterar" header="Alterar" widgetVar="dialogAlterar" resizable="false" showEffect="clip" hideEffect="fold">
+					<p:ajax event="close" update=":formPrincipal:tabelaPacientes" />
+					<p:panelGrid id="panelAlterar" columns="2">
+						<h:outputText value="Nome:" />
+						<p:inputText value="#{pacienteController.paciente.nome}" />
+						<h:outputText value="rg:" />
+						<p:inputText value="#{pacienteController.paciente.rg}" />
+						<h:outputText value="cpf:" />
+						<p:inputText value="#{pacienteController.paciente.cpf}" />
+					</p:panelGrid>
+					<p:commandButton value="Alterar" action="#{pacienteController.alterar}" oncomplete="dialogAlterar.hide()" ajax="false" />
+				</p:dialog>
+
+
+				<p:dialog id="Excluir" header="Excluir #{pacienteController.paciente.nome} ?" widgetVar="dialogExcluir" resizable="false" showEffect="clip"
+					hideEffect="fold">
+					<!-- 					<p:ajax event="close" update=":formPrincipal:tabelaPacientes" /> -->
+					<!-- 					<p:confirmDialog id="Excluir" message="Você gostaria de Deletar o #{pacienteController.paciente.nome}?" header="Excluir" severity="alert" -->
+					<!-- 						widgetVar="dialogExcluir" appendToBody="true"> -->
+
+					<h:outputText value="Você gostaria de Deletar o #{pacienteController.paciente.nome}?" />
+					<p:commandButton value="Sim" oncomplete="dialogExcluir.hide()" actionListener="#{pacienteController.excluir}"
+						update=":formPrincipal:tabelaPacientes" />
+					<p:commandButton value="Não" actionListener="#{pacienteController.refreshMedicoSelecionado}" oncomplete="dialogExcluir.hide()" />
+
+					<!-- 					</p:confirmDialog> -->
+				</p:dialog>
+
+				<p:dialog id="Cadastrar" header="Cadastrar" widgetVar="dialogCadastrar" modal="false" showEffect="clip" hideEffect="fold">
+					<p:ajax event="close" update="Cadastrar" />
+					<p:panelGrid id="panelCadastrar" columns="2">
+						<h:outputText value="Nome:" />
+						<p:inputText value="#{pacienteController.paciente.nome}" />
+						<h:outputText value="rg:" />
+						<p:inputText value="#{pacienteController.paciente.rg}" />
+						<h:outputText value="cpf:" />
+						<p:inputText value="#{pacienteController.paciente.cpf}" />
+					</p:panelGrid>
+					<p:commandButton value="Cadastrar" actionListener="#{pacienteController.cadastrar}" update=":formPrincipal:tabelaPacientes"
+						oncomplete="dialogCadastrar.hide()" />
+				</p:dialog>
+
+			</h:form>
+		</c:if>
+
+		<!-- 		<h:form id="formCadastrar"> -->
+		<!-- 			<p:dialog header="Cadastrar" widgetVar="dialogCadastrar" modal="false" showEffect="clip" hideEffect="fold"> -->
+		<!-- 				<p:ajax event="close" update="formCadastrar" /> -->
+		<!-- 				<p:panelGrid id="panelCadastrar" columns="2"> -->
+		<!-- 					<h:outputText value="Nome:" /> -->
+		<!-- 					<p:inputText value="#{pacienteController.paciente.nome}" /> -->
+		<!-- 					<h:outputText value="rg:" /> -->
+		<!-- 					<p:inputText value="#{pacienteController.paciente.rg}" /> -->
+		<!-- 					<h:outputText value="cpf:" /> -->
+		<!-- 					<p:inputText value="#{pacienteController.paciente.cpf}" /> -->
+		<!-- 				</p:panelGrid> -->
+		<!-- 				<p:commandButton value="Cadastrar" actionListener="#{pacienteController.cadastrar}" update=":formPrincipal:tabelaPacientes" -->
+		<!-- 					oncomplete="dialogCadastrar.hide()" /> -->
+		<!-- 			</p:dialog> -->
+		<!-- 		</h:form> -->
+	</ui:define>
+
+	<ui:define name="leftContent">
+		<ui:include src="../templates/tiles/LeftMenu.xhtml" />
+	</ui:define>
+</ui:composition>
